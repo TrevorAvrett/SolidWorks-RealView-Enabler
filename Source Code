@@ -20,11 +20,12 @@ namespace WindowsRegistry
         {
 
             dividerMaker(' ', "SOLIDWORKS RealView Graphics Enabler", 0);
-
+            dividerMaker(' ', "Created by: Trevor Avrett", 0);
+            
             int solidWorksVersion = 0; //Stores the year of the solidworks build desired. 
                                        //(Eventually want to remove this by filtering the options to: SOFTWARE\SolidWorks\SOLIDWORKS XXXX)
 
-            WriteLine("Versions Found: \n");
+            WriteLine("\n" + "Versions Found:" + "\n");
 
 
             List<int> swVersions = new List<int>();
