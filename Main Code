@@ -1,0 +1,270 @@
+using System;
+using static System.Console;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.VisualBasic;
+using Microsoft.Win32;
+
+namespace WindowsRegistry
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+
+            dividerMaker(' ', "SOLIDWORKS RealView Graphics Enabler", 0);
+
+            int solidWorksVersion = 0; //Stores the year of the solidworks build desired. 
+                                       //(Eventually want to remove this by filtering the options to: SOFTWARE\SolidWorks\SOLIDWORKS XXXX)
+
+            WriteLine("Versions Found: \n");
+
+
+            List<int> swVersions = new List<int>();
+            using (RegistryKey rk = Registry.CurrentUser.OpenSubKey(@"Software\SolidWorks\"))
+            {
+                foreach (string swName in rk.GetSubKeyNames())
+                {
+                    if (swName.Contains("SOLIDWORKS") && swName.Length > ("solidWorks").Length && swName.Substring(swName.Length - 4).All(char.IsDigit))
+                    {
+
+                        if (int.Parse(swName.Substring(swName.Length - 4)) > solidWorksVersion)
+                        {
+                            solidWorksVersion = int.Parse(swName.Substring(swName.Length - 4));
+                        }
+
+                        swVersions.Add(int.Parse(swName.Substring(swName.Length - 4)));
+
+                        WriteLine("\t"+"-" + swName);
+                    }
+                }
+            }
+
+            dividerMaker('-', "", 1);
+
+            WriteLine("\n" + "Your latest version of SolidWorks is: " + solidWorksVersion);
+
+
+
+            //WriteLine(swVersions);
+
+            dividerMaker('-', "", 1);
+
+            //========================< DETERMINE THE USER'S GRAPHICS CARD >================================================
+
+            string currentGCardLocation = @"SOFTWARE\SolidWorks\SOLIDWORKS " + solidWorksVersion + @"\Performance\Graphics\Hardware\Current"; //Directory of where Solidworks defines the name of your graphics card
+            string yourGraphicsCard = ReadCurrentUserKeyValues("Renderer", currentGCardLocation); ; //Used to store the GC name, -as defined by the key registry terminology
+            
+            //yourGraphicsCard = ("XXX"); //Debug testline for non-Nvidia or AMD cards
+
+            WriteLine("\n" + "Your Graphics Card ID is: " + yourGraphicsCard);
+
+            string GCBrand = ""; //Stores the brand of the Graphics Card via the DO-WHILE loop, below
+
+
+            do
+            {
+                if (new string[] { "GeForce", "Nvidia", "PNY", "EVGA", "Galax", "Zotac", "Palit" }.Any(s => yourGraphicsCard.Contains(s)))
+                {
+                    GCBrand = "GeForce"; //If it's an Nvidia-based card, (based off of the string of keywords)
+                }
+                else if (new string[] { "RX", "AMD", "Sapphire", "PowerColor", "XFX", "HIS", "VisionTek" }.Any(s => yourGraphicsCard.Contains(s)))
+                {
+                    GCBrand = "RX"; //If it's an AMD-based card, (based off of the string of keywords)
+                }
+                else
+                {
+                    dividerMaker('\\', "", 1);
+
+                    WriteLine("\n" + "We were unable to determine whether your graphics card was either an 'Nvidia' or 'AMD' -based card."
+                        + "\n\t" + "Please indicate whether you would like to continue, using either the 'Nvidia' or the 'AMD' preferences."
+                        + "\n\t" + "(Type either 'Nvidia' or 'AMD' then hit [ENTER] or [RETURN])." + "\n\n");
+
+
+                    string brandClarification = Console.ReadLine().ToUpper();
+
+                    if (brandClarification.Contains(("Nvidia").ToUpper()))
+                    {
+                        GCBrand = "GeForce";
+                    }
+                    else if (brandClarification.Contains(("AMD")))
+                    {
+                        GCBrand = "RX";
+                    }
+
+                    WriteLine("\n" + "Running your graphics card as type: " + GCBrand);
+
+                    dividerMaker('/', "", 1);
+                }
+
+            } while (!(GCBrand.Equals("GeForce") || GCBrand.Equals("RX")));
+
+
+            //========================< SET THE DIRECTORY & SET THE 'WORKAROUNDS' DWORD HEX VALUE TO THE GIVEN GRAPHICS CARD BRAND >================================================
+
+            int count = 1; //counts how many times this program has been ran, (used for attempting other values for 'Workarounds' if needed)
+            uint chosenWorkaroundsHexValue = 0;
+            string workaroundsValue = "";
+            do
+            {
+                string subGCDirectory = ""; //stores the directory location of the new key entry
+
+                if (string.Equals(GCBrand, "GeForce"))
+                {
+                    subGCDirectory = @"NV40";
+
+                    switch (count) //AMD and Nvidia have seperate Switch statements in case user feedback deems some values more successful than others for their given brand
+                    {
+                        case 1:
+                            chosenWorkaroundsHexValue = 0x00030408;
+                            workaroundsValue = "30408";
+                            break;
+                        case 2:
+                            chosenWorkaroundsHexValue = 0x00030008;
+                            workaroundsValue = "30008";
+                            break;
+                        case 3:
+                            chosenWorkaroundsHexValue = 0x00031408;
+                            workaroundsValue = "31408";
+                            break;
+                        case 4:
+                            chosenWorkaroundsHexValue = 0x00020008;
+                            workaroundsValue = "20008";
+                            break;
+
+                        default:
+                            Console.WriteLine("\n" + "Maybe your graphics card is not compatible? Try online resources for help.");
+                            break;
+                    }
+                }
+
+                else if (string.Equals(GCBrand, "RX"))
+                {
+                    subGCDirectory = @"R420";
+
+                    switch (count) //AMD and Nvidia have seperate Switch statements in case user feedback deems some values more successful than others for their given brand
+                    {
+                        case 1:
+                            chosenWorkaroundsHexValue = 0x00030408;
+                            workaroundsValue = "30408";
+                            break;
+                        case 2:
+                            chosenWorkaroundsHexValue = 0x00030008;
+                            workaroundsValue = "30008";
+                            break;
+                        case 3:
+                            chosenWorkaroundsHexValue = 0x00031408;
+                            workaroundsValue = "314088";
+                            break;
+                        case 4:
+                            chosenWorkaroundsHexValue = 0x00020008;
+                            workaroundsValue = "20008";
+                            break;
+
+                        default:
+                            Console.WriteLine("\n" + "Maybe your graphics card is not compatible? Try online resources for help.");
+                            break;
+                    }
+                }
+
+                string newRegFolder = "";
+
+                dividerMaker('-', "", 1);
+
+                Console.WriteLine("\n" + "Attempting using the 'Workarounds' Hex Value: " + workaroundsValue);
+
+                newRegFolder += (@"\" + yourGraphicsCard);
+
+
+                foreach(int year in swVersions)
+                {
+                    dividerMaker('-', "", 1);
+
+                    WriteLine("\n" + "Applying changes to: SOLIDWORKS " + year);
+
+                    newRegFolder = (@"Software\SolidWorks\SOLIDWORKS " + year  + @"\Performance\Graphics\Hardware\Gl2Shaders\" + subGCDirectory);
+                    //WriteLine("\n" + "Directory Chosen: " + newRegFolder);
+
+                    RegistryKey BaseFolderPath = Registry.CurrentUser;
+                    RegistryKey newFolder = BaseFolderPath.CreateSubKey(newRegFolder);
+
+                    newFolder.SetValue("Workarounds", chosenWorkaroundsHexValue, RegistryValueKind.DWord);
+                }
+
+
+
+                dividerMaker('=', " DONE! ", 1);
+
+                WriteLine("\n" + "Please exit SolidWorks, then Relaunch it. ");
+                WriteLine("\n" + "If RealView Graphics does not automatically start when you open a model, check to see if it needs" +
+                    "\n" + "to be toggled on (In SolidWorks: open the, \"View\" folder in the top bar, then click, \"Display\", then, \"RealView Graphics.\" ) " +
+
+                    "\n\n" + "Exit this console window, if everything is working properly! :)" +
+                    "\n" + "If RealView is still not available, please type: \"failed\" (without quotations) and hit [ENTER] or [RETURN]." + "\n\n");
+
+
+
+                string verdict = Console.ReadLine().ToLower();
+
+                if (string.Equals(verdict, "failed"))
+                {
+                    dividerMaker('-', "", 2);
+
+                    WriteLine("\n" + "Okay, I'm trying again. ");
+                    count += 1;
+                }
+
+
+            } while (count < 5);
+
+            Console.WriteLine("Maybe your graphics card is not compatible? Try online resources for help.");
+
+            ReadKey();
+        }
+
+
+        static string ReadCurrentUserKeyValues(string keyName, string subKey)
+        {
+            RegistryKey sk = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(subKey);
+
+            if (sk == null) return null;
+            else return sk.GetValue(keyName.ToUpper()).ToString();
+        }
+
+        static void WriteIntoRegistry(string keyName, uint usingREG_DWORD, string destination)
+        {
+
+            // RegistryKey key = Registry.CurrentUser.OpenSubKey(destination, true);
+            //key = key.CreateSubKey("Workarounds");
+            //key.SetValue(keyName, usingREG_DWORD, RegistryValueKind.DWord);
+        }
+
+        static void dividerMaker(char paddingSymbol, string paddedString, int cushionLineCount)
+        {
+            WriteLine();
+
+            for (int i = 0; i <= cushionLineCount-1; i++) //Upper Padding cushionLines
+            {
+                string mainDivider = new string(paddingSymbol, Console.WindowWidth - 1);
+                WriteLine(mainDivider);
+            }
+            if ( !(string.Equals(paddedString, "")) )
+            { 
+                string message = paddedString;
+                string padding = (string.Concat(Enumerable.Repeat(paddingSymbol, count: (WindowWidth - (message).Length) / 2))
+                                    + message
+                                    + string.Concat(Enumerable.Repeat(paddingSymbol, count: (WindowWidth - (message).Length) / 2)));
+                WriteLine(padding);
+
+                for (int i = 0; i <= cushionLineCount-1; i++) //Lower Padding cushionLines
+                {
+                    string mainDivider = new string(paddingSymbol, Console.WindowWidth - 1);
+                    WriteLine(mainDivider);
+                }
+            }
+
+        }
+    }
+}
