@@ -181,9 +181,12 @@ namespace WindowsRegistry
 
                 Console.WriteLine("\n" + "Attempting using the 'Workarounds' Hex Value: " + workaroundsValue);
 
+
+
+                //========================< CREATE THE NEW Gl2 SHADER WORKAROUND FOR ALL VERSIONS OF SW INSTALLED >================================================
+                
                 newRegFolder += (@"\" + yourGraphicsCard);
-
-
+                
                 foreach(int year in swVersions)
                 {
                     dividerMaker('-', "", 1);
@@ -210,7 +213,7 @@ namespace WindowsRegistry
                     "\n\n" + "Exit this console window, if everything is working properly! :)" +
                     "\n" + "If RealView is still not available, please type: \"failed\" (without quotations) and hit [ENTER] or [RETURN]." + "\n\n");
 
-
+                //========================< TRY ANOTHER WORKAROUND VALUE >================================================
 
                 string verdict = Console.ReadLine().ToLower();
 
