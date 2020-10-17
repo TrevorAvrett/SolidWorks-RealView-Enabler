@@ -13,4 +13,6 @@ Since this application looks into the Key Registry and I am not a, "known publis
 RealView Enabler can apply the patch to multiple versions of SolidWorks installed on your computer. 
 It will not alter any other SolidWorks preferences/settings. 
 
-<img src="/TrevorAvrett/SolidWorks-RealView-Enabler/blob/master/RealView%20Mode%20Example.png?raw=true" alt="RealView Mode Example.png">
+
+![Realview in Settings](“https://github.com/TrevorAvrett/SolidWorks-RealView-Enabler/blob/master/RealView%20Mode%20Example.png?raw=true”)
+<img src="https://github.com/TrevorAvrett/SolidWorks-RealView-Enabler/blob/master/RealView%20Mode%20Example.png?raw=true">
