@@ -12,3 +12,5 @@ Since this application looks into the Key Registry and I am not a, "known publis
 "SolidWorks Realview Enabler.exe" is built to work with any version of SolidWorks needed until Dassault Systèmes fixes this error. 
 RealView Enabler can apply the patch to multiple versions of SolidWorks installed on your computer. 
 It will not alter any other SolidWorks preferences/settings. 
+
+<img src="/TrevorAvrett/SolidWorks-RealView-Enabler/blob/master/RealView%20Mode%20Example.png?raw=true" alt="RealView Mode Example.png">
