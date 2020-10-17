@@ -14,5 +14,5 @@ RealView Enabler can apply the patch to multiple versions of SolidWorks installe
 It will not alter any other SolidWorks preferences/settings. 
 
 
-![Realview in Settings](“https://github.com/TrevorAvrett/SolidWorks-RealView-Enabler/blob/master/RealView%20Mode%20Example.png?raw=true”)
+
 <img src="https://github.com/TrevorAvrett/SolidWorks-RealView-Enabler/blob/master/RealView%20Mode%20Example.png?raw=true">
