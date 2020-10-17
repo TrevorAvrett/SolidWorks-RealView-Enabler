@@ -7,6 +7,8 @@ for a better 3D CAD experience.
 Launch the, "SolidWorks Realview Enabler.exe" and it will do everything for you. 
 You can delete the RealView Enabler application as soon as it's done its job.
 
-It is designed to work with any version of SolidWorks needed until Dassault Systèmes fixes this error. 
+Since this application looks into the Key Registry and I am not a, "known publisher," it might trigger virus security concerns. I included the source code. Feel free to compile it yourself! It's not a virus or harmful to your computer in any way. 
+
+"SolidWorks Realview Enabler.exe" is built to work with any version of SolidWorks needed until Dassault Systèmes fixes this error. 
 RealView Enabler can apply the patch to multiple versions of SolidWorks installed on your computer. 
 It will not alter any other SolidWorks preferences/settings. 
